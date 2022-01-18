@@ -1,31 +1,61 @@
-import threading, time
+from turtle import *
 
-# 银行存款
-balance = 0
+# 设置色彩模式是RGB:
+colormode(255)
 
+lt(90)
 
-# 存取函数
-def change_it(n):
-    # 先存后取，结果应该不变，为0
-    global balance
-    balance = balance + n
-    balance = balance - n
+lv = 14
+l = 120
+s = 45
 
+width(lv)
 
-# 执行数次
-def run_thread(n):
-    for i in range(2000000):
-        change_it(n)
+# 初始化RGB颜色:
+r = 0
+g = 0
+b = 0
+pencolor(r, g, b)
 
+penup()
+bk(l)
+pendown()
+fd(l)
 
-# 创建两个线程
-t1 = threading.Thread(target=run_thread, args=(5,))
-t2 = threading.Thread(target=run_thread, args=(8,))
+def draw_tree(l, level):
+    global r, g, b
+    # save the current pen width
+    w = width()
 
-t1.start()
-t2.start()
+    # narrow the pen width
+    width(w * 3.0 / 4.0)
+    # set color:
+    r = r + 1
+    g = g + 2
+    b = b + 3
+    pencolor(r % 200, g % 200, b % 200)
 
-t1.join()
-t2.join()
+    l = 3.0 / 4.0 * l
 
-print(balance)
+    lt(s)
+    fd(l)
+
+    if level < lv:
+        draw_tree(l, level + 1)
+    bk(l)
+    rt(2 * s)
+    fd(l)
+
+    if level < lv:
+        draw_tree(l, level + 1)
+    bk(l)
+    lt(s)
+
+    # restore the previous pen width
+    width(w)
+
+speed("fastest")
+
+draw_tree(l, 4)
+
+done()
