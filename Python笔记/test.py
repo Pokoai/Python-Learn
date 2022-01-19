@@ -1,61 +1,19 @@
-from turtle import *
+# server
 
-# 设置色彩模式是RGB:
-colormode(255)
+import socket
 
-lt(90)
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # SOCK_DGRAM 指定了这个 Socket 的类型是 UDP
+s.bind(('127.0.0.1', 8999))
 
-lv = 14
-l = 120
-s = 45
+# 绑定端口和 TCP 一样，但是不需要调用 listen() 方法，
+# 而是直接接收来自任何客户端的数据：
 
-width(lv)
+print('Bind UDP on 9999...')
+while True:
+    # 接受数据
+    data, addr = s.recvfrom(1024)
+    print('Received from %s:%s' % addr)
+    s.sendto(b'Hello, %s!' % data, addr)
 
-# 初始化RGB颜色:
-r = 0
-g = 0
-b = 0
-pencolor(r, g, b)
-
-penup()
-bk(l)
-pendown()
-fd(l)
-
-def draw_tree(l, level):
-    global r, g, b
-    # save the current pen width
-    w = width()
-
-    # narrow the pen width
-    width(w * 3.0 / 4.0)
-    # set color:
-    r = r + 1
-    g = g + 2
-    b = b + 3
-    pencolor(r % 200, g % 200, b % 200)
-
-    l = 3.0 / 4.0 * l
-
-    lt(s)
-    fd(l)
-
-    if level < lv:
-        draw_tree(l, level + 1)
-    bk(l)
-    rt(2 * s)
-    fd(l)
-
-    if level < lv:
-        draw_tree(l, level + 1)
-    bk(l)
-    lt(s)
-
-    # restore the previous pen width
-    width(w)
-
-speed("fastest")
-
-draw_tree(l, 4)
-
-done()
+# recvfrom()方法返回数据和客户端的地址与端口，
+# 这样，服务器收到数据后，直接调用 sendto()就可以把数据用 UDP 发给客户端。
